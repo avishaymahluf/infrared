@@ -85,3 +85,8 @@ virsh:
     src: plugins/virsh
     desc: Provision virtual machines on a single Hypervisor using libvirt
     type: provision
+
+coverage:
+    src: plugins/coverage
+    desc: Test openstack coverage
+    type: test

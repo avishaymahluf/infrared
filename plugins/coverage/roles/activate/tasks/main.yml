@@ -1,0 +1,50 @@
+---
+- name: Install pip
+  become: yes
+  easy_install:
+    name: pip
+    state: latest
+
+- name: Install coverage
+  become: yes
+  pip:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+      - pip
+      - setuptools
+      - coverage
+
+- name: install python-devel and gcc
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - python-devel
+    - gcc
+
+- file:
+    path: /coverage/combined
+    state: directory
+    mode: 0777
+
+- template:
+    dest: "/coverage/config"
+    src: my.coveragerc.j2
+    mode: 0644
+
+- copy:
+    dest: "/lib/python2.7/site-packages/sitecustomize.py" # TBD deal with python version
+    src: sitecustomize.py
+    mode: 0644
+
+- copy:
+    dest: "/coverage/collect.sh"
+    src: collect.sh
+    mode: 0744
+
+- copy:
+    dest: /etc/cron.d/coverage-combine
+    src: coverage.cron
+    mode: 0644
+

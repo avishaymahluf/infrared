@@ -1,0 +1,20 @@
+- name: get openstack-service command
+  yum: name=openstack-utils state=present
+
+- name: stop all services so they write out data files
+  shell: openstack-service stop
+  ignore_errors: yes
+
+- name: aggregate covereage data per host
+  shell: /coverage/collect.sh combine
+  args:
+      chdir: /coverage
+  when: inventory_hostname != groups['undercloud'][0]
+
+- name: copy coverage data to first controller
+  synchronize:
+      src: /coverage/combined/data
+      dest: /coverage/combined/data.{{ inventory_hostname }}
+      mode: pull
+  when: inventory_hostname != groups['undercloud'][0]
+  delegate_to: "{{ groups['undercloud'][0] }}"

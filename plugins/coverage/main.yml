@@ -1,0 +1,21 @@
+---
+
+- name: Install covarage
+  hosts: openstack_nodes
+  become: true
+  roles:
+      - { role: activate, when: test.activate | default(False) }
+
+- name: Collect coverage data from all nodes
+  hosts: openstack_nodes
+  gather_facts: no
+  become: true
+  roles:
+      - { role: collect, when: test.collect | default(False) }
+
+- name: Generate coverage report
+  hosts: undercloud[0]
+  gather_facts: no
+  become: true
+  roles:
+      - { role: report, when: test.report | default(False) }
