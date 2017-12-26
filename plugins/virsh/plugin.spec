@@ -1,4 +1,8 @@
-plugin_type: provision
+---
+config:
+    plugin_type: provision
+    dependencies:
+        - source: https://github.com/rhos-infra/infrared-common-libraries.git
 subparsers:
     virsh:
         description: Provision virtual machines on a single Hypervisor using libvirt
@@ -41,7 +45,7 @@ subparsers:
                       help: |
                         URL to the image used for node provisioning.
                         Default is internal path for RHEL guest image
-                      default: https://url.corp.redhat.com/rhel-guest-image-7-4-210-x86-64-qcow2
+                      default: https://url.corp.redhat.com/rhel-guest-image-7-4-220-x86-64-qcow2
 
             - title: topology
               options:
