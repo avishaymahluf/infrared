@@ -24,6 +24,6 @@ export COVERAGE_PROCESS_START=/coverage/combined/config
 export REPORT_MODE=1
 
 cd /coverage/combined
-coverage combine --rcfile=/coverage/combined/config
+coverage combine --append --rcfile=/coverage/combined/config
 
 [[ ! -z "$2" ]] && coverage $2 --rcfile=/coverage/combined/config

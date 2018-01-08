@@ -4,18 +4,23 @@
     - xz
     - tar
 
+- name: aggregate all covereage data
+  shell: coverage combine --append --rcfile=/coverage/.coveragerc
+  args:
+      chdir: /coverage
+
 - name: generate html coverage report
-  shell: /coverage/collect.sh html
+  shell: coverage html --rcfile=/coverage/.coveragerc
   args:
       chdir: /coverage
 
 - name: generate plain text coverage overview
-  shell: "/coverage/collect.sh report &> ./coverage_{{ inventory_hostname }}/coverage_{{ inventory_hostname }}.txt"
+  shell: "coverage report --rcfile=/coverage/.coveragerc &> ./coverage_{{ inventory_hostname }}/coverage_{{ inventory_hostname }}.txt"
   args:
       chdir: /coverage
 
 - name: append combined data file to collected report
-  shell: "cp /coverage/combined/data /coverage/coverage_{{ inventory_hostname }}/combined_data"
+  shell: "cp /coverage/.coverage /coverage/coverage_{{ inventory_hostname }}/combined_data"
 
 - name: pack coverage report
   shell: "tar cJf ./coverage_{{ inventory_hostname }}.tar.xz ./coverage_{{ inventory_hostname }}"

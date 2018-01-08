@@ -6,15 +6,14 @@
   ignore_errors: yes
 
 - name: aggregate covereage data per host
-  shell: /coverage/collect.sh combine
+  shell: coverage combine --append --rcfile=/coverage/.coveragerc
   args:
       chdir: /coverage
-  when: inventory_hostname != groups['undercloud'][0]
 
-- name: copy coverage data to first controller
+- name: copy coverage data to undercloud
   synchronize:
-      src: /coverage/combined/data
-      dest: /coverage/combined/data.{{ inventory_hostname }}
+      src: /coverage/.coverage
+      dest: /coverage/.coverage.{{ inventory_hostname }}
       mode: pull
   when: inventory_hostname != groups['undercloud'][0]
   delegate_to: "{{ groups['undercloud'][0] }}"

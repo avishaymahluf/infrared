@@ -3,7 +3,9 @@
 branch = True
 source = {% for module in all_modules %}/usr/lib/python2.7/site-packages/{{ module }}/,{% endfor %}
 
-data_file = /coverage/data
+
+
+data_file = /coverage/.coverage
 parallel = True
 concurrency = eventlet
 

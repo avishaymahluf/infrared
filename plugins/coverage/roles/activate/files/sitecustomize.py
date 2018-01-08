@@ -1,25 +1,23 @@
 import os
-import coverage
+from coverage import Coverage
 import signal
 import time
 
-
-
-os.environ.setdefault('COVERAGE_PROCESS_START', "/coverage/config")
+os.environ.setdefault('COVERAGE_PROCESS_START', "/coverage/.coveragerc")
 cps = os.environ['COVERAGE_PROCESS_START']
 
-if (os.environ.get('REPORT_MODE', False) or
-        "bin/coverage" in os.environ.get('_', 'foo')):  # TODO check arg[0]
-    os.environ.setdefault('COVERAGE_FILE', "/coverage/data")
-else:
-    os.environ.setdefault('COVERAGE_FILE', "/coverage/data.%x.%d" %
-                                   (int(time.time()*10000) & 0xFFFFFFF,
-                                    os.getuid()))  # looping in 7.45h
+# if (os.environ.get('REPORT_MODE', False) or
+#         "bin/coverage" in os.environ.get('_', '')):
+#     os.environ.setdefault('COVERAGE_FILE', "/coverage/data")
+# else:
+#     os.environ.setdefault('COVERAGE_FILE', "/coverage/data.%x.%d" %
+#                           (int(time.time()*10000) & 0xFFFFFFF,
+#                            os.getuid()))  # looping in 7.45h
 
 real_signal = signal.signal
 real_os_exit = os._exit
 
-cov = coverage.coverage(config_file=cps, auto_data=True)
+cov = Coverage(config_file=cps, auto_data=True)
 cov.start()
 cov._warn_no_data = False
 cov._warn_unimported_source = False
@@ -31,6 +29,7 @@ def decorate_fatal_method(meth):
         cov.save()  # let it die noisily
         return meth(*arg, **kwargs)
     return fatal_coverage_decor
+
 
 os_monkey_list = ['abort', '_exit', 'execl', 'execle', 'execlp',
                   'execlpe', 'execv', 'execve', 'execvp', 'execvpe']
@@ -47,13 +46,14 @@ def coverage_save_signal_handler(signum, frame):
     os.kill(os.getpid(), signum)
 
 
-# The list is incomplte!
-DEF_TERM_SIGNALS = set((signal.SIGHUP, signal.SIGINT, signal.SIGPIPE,
-                        signal.SIGALRM, signal.SIGTERM, signal.SIGUSR1,
-                        signal.SIGUSR2, signal.SIGVTALRM, signal.SIGPROF))
-DEF_CORE_SIGNALS = set((signal.SIGQUIT, signal.SIGILL, signal.SIGABRT,
-                        signal.SIGFPE, signal.SIGBUS, signal.SIGSEGV,
-                        signal.SIGXCPU, signal.SIGXFSZ, signal.SIGSYS))
+# The list is incomplete!
+DEF_TERM_SIGNALS = {signal.SIGHUP, signal.SIGINT, signal.SIGPIPE,
+                    signal.SIGALRM, signal.SIGTERM, signal.SIGUSR1,
+                    signal.SIGUSR2, signal.SIGVTALRM, signal.SIGPROF}
+
+DEF_CORE_SIGNALS = {signal.SIGQUIT, signal.SIGILL, signal.SIGABRT,
+                    signal.SIGFPE, signal.SIGBUS, signal.SIGSEGV,
+                    signal.SIGXCPU, signal.SIGXFSZ, signal.SIGSYS}
 
 # python by default handles the SIGINT and ignores the SIGPIPE
 # Looks like the mod_wsgi changes the signal handlers before this file

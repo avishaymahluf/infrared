@@ -10,12 +10,14 @@
   pip:
     name: "{{ item }}"
     state: latest
+  ignore_errors: yes
   with_items:
       - pip
       - setuptools
       - coverage
 
 - name: install python-devel and gcc
+  become: yes
   yum:
     name: "{{ item }}"
     state: present
@@ -23,28 +25,38 @@
     - python-devel
     - gcc
 
+- name: get openstack-service command
+  become: yes
+  yum:
+    name: openstack-utils
+    state: present
+
 - file:
-    path: /coverage/combined
+    path: /coverage
     state: directory
     mode: 0777
 
 - template:
-    dest: "/coverage/config"
+    dest: "/coverage/.coveragerc"
     src: my.coveragerc.j2
     mode: 0644
 
 - copy:
-    dest: "/lib/python2.7/site-packages/sitecustomize.py" # TBD deal with python version
+    dest: "/lib/python2.7/site-packages/sitecustomize.py"
     src: sitecustomize.py
     mode: 0644
 
-- copy:
-    dest: "/coverage/collect.sh"
-    src: collect.sh
-    mode: 0744
+#- copy:
+#    dest: "/coverage/collect.sh"
+#    src: collect.sh
+#    mode: 0744
 
-- copy:
-    dest: /etc/cron.d/coverage-combine
-    src: coverage.cron
-    mode: 0644
+#- copy:
+#    dest: /etc/cron.d/coverage-combine
+#    src: coverage.cron
+#    mode: 0644
 
+
+- name: restart all services to activate coverage
+  become: yes
+  shell: openstack-service restart
