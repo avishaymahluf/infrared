@@ -1,7 +1,7 @@
 # .coveragerc to control coverage.py
 [run]
 branch = True
-source = {% for module in all_modules %}/usr/lib/python2.7/site-packages/{{ module }}/,{% endfor %}
+source = {% for module in source_modules %}/usr/lib/python2.7/site-packages/{{ module }}/,{% endfor %}
 
 
 
