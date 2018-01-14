@@ -63,3 +63,5 @@
   become: yes
   ignore_errors: yes
   shell: openstack-service restart
+  environment:
+        COVERAGE_PROCESS_START: /coverage/.coveragerc

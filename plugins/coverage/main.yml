@@ -1,7 +1,7 @@
 ---
 
 - name: Install covarage
-  hosts: openstack_nodes
+  hosts: "{{ test.hosts }}"
   become: true
   roles:
       - { role: activate, when: test.activate | default(False) }

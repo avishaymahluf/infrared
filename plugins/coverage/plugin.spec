@@ -11,6 +11,10 @@ subparsers:
                       type: Bool
                       default: no
                       help: Install the coverage
+                  hosts:
+                      type: Value
+                      default: openstack_nodes
+                      help: Group of hosts that coverage will be installed on
                   dfg:
                       type: Value
                       help: Openstack components packages of code to be measured
