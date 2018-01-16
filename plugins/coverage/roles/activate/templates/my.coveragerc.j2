@@ -3,6 +3,9 @@
 source = {% for module in source_modules %}/usr/lib/python2.7/site-packages/{{ module }}/,{% endfor %}
 
 
+omit =
+    # ignore tests
+    /usr/lib/python2.7/site-packages/*/tests/*
 
 data_file = /coverage/.coverage
 parallel = True
