@@ -58,6 +58,12 @@
 #    src: coverage.cron
 #    mode: 0644
 
+# workaround due to the following bug:
+# https://bugzilla.redhat.com/show_bug.cgi?id=1394689
+- name: stop zaqar service
+  become: yes
+  shell: systemctl stop openstack-zaqar
+  when: inventory_hostname == groups['undercloud'][0]
 
 - name: restart all services to activate coverage
   become: yes
@@ -65,3 +71,10 @@
   shell: openstack-service restart
   environment:
         COVERAGE_PROCESS_START: /coverage/.coveragerc
+
+- name: start zaqar service
+  become: yes
+  shell: systemctl start openstack-zaqar
+  environment:
+        COVERAGE_PROCESS_START: /coverage/.coveragerc
+  when: inventory_hostname == groups['undercloud'][0]
